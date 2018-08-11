@@ -98,7 +98,7 @@ class MNISTEvaluator:
             metrics=["accuracy"],
         )
         start_time = time()
-        model_with_bn.fit(self.x_train, self.y_train)
+        model_with_bn.fit(self.x_train, self.y_train, validation_split=0.1)
         elapsed_seconds = time() - start_time
         print("Learning time: {:.03f} sec".format(elapsed_seconds))
 
