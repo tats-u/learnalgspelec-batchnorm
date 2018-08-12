@@ -98,8 +98,8 @@ class MNISTEvaluator:
         ax2 = fig.add_subplot(212)
         ax1.plot(history["loss"], label="Training")
         ax2.plot(history["acc"], label="Training")
-        ax1.plot(history["val_loss"], label="Validation")
-        ax2.plot(history["val_acc"], label="Validation")
+        ax1.plot(history["val_loss"], label="Test")
+        ax2.plot(history["val_acc"], label="Test")
         ax1.set_title("Loss")
         ax2.set_title("Accuracy")
         ax1.set_ylim((0., 0.15))
@@ -121,7 +121,7 @@ class MNISTEvaluator:
         )
         start_time = time()
         history = model.fit(
-            self.x_train, self.y_train, validation_split=0.1, epochs=6
+            self.x_train, self.y_train, validation_data=(self.x_test, self.y_test), epochs=6
         )
         elapsed_seconds = time() - start_time
         print("Learning time: {:.03f} sec".format(elapsed_seconds))
