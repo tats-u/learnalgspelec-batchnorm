@@ -143,7 +143,7 @@ class MNISTEvaluator:
             self.x_train,
             self.y_train,
             validation_data=(self.x_test, self.y_test),
-            epochs=6,
+            epochs=20,
         )
         elapsed_seconds = time() - start_time
         print(f"Learning time: {elapsed_seconds:.03f} sec")
