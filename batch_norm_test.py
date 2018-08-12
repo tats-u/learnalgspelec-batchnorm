@@ -85,7 +85,7 @@ class MNISTEvaluator:
             y_test,
         ) = MNISTEvaluator.fetch_mnist_data()
 
-        print(f"Data: {x_train.shape[0]} (Training) / {x_test} (Test)")
+        print(f"Data: {x_train.shape[0]} (Training) / {x_test.shape[0]} (Test)")
 
         # Verify data
         self.per_data_dimension = x_train.shape[1:]
