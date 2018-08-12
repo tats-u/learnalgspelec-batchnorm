@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import ssl
 from copy import copy
 from functools import reduce
@@ -7,6 +8,7 @@ from operator import add
 from time import time
 from typing import Any, Iterable, Sequence, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as kr
@@ -89,6 +91,26 @@ class MNISTEvaluator:
 
         self.optimizer = optimizer
 
+    @staticmethod
+    def plot_losses(history, title, out=None):
+        fig = plt.figure()
+        ax1 = fig.add_subplot(211)
+        ax2 = fig.add_subplot(212)
+        ax1.plot(history["loss"], label="Training")
+        ax2.plot(history["acc"], label="Training")
+        ax1.plot(history["val_loss"], label="Validation")
+        ax2.plot(history["val_acc"], label="Validation")
+        ax1.set_title("Loss")
+        ax2.set_title("Accuracy")
+        ax1.set_ylim((0., 0.15))
+        ax2.set_ylim(((0.95, 1.)))
+        fig.suptitle(title)
+        ax1.legend()
+        ax2.legend()
+        plt.savefig(out, transparent=True)
+        plt.close(fig)
+
+
     def train_and_evaluate(self, model_label, model):
 
         print(f"** {model_label} **")
@@ -98,12 +120,16 @@ class MNISTEvaluator:
             metrics=["accuracy"],
         )
         start_time = time()
-        model_with_bn.fit(self.x_train, self.y_train, validation_split=0.1)
+        history = model.fit(
+            self.x_train, self.y_train, validation_split=0.1, epochs=6
+        )
         elapsed_seconds = time() - start_time
         print("Learning time: {:.03f} sec".format(elapsed_seconds))
 
         loss, accuracy = model.evaluate(self.x_test, self.y_test)
         print("Loss: {} / Accuracy: {}".format(loss, accuracy))
+
+        MNISTEvaluator.plot_losses(history.history, model_label + "(Time: {:.03f} s)".format(elapsed_seconds), model_label + ".pdf")
 
     def make_cnn_model(self, builder: ModelBuilder):
         builder.add(
@@ -134,6 +160,8 @@ class MNISTEvaluator:
         builder.add(Dense(10, activation="softmax"))
         return builder.build()
 
+if os.name != "nt" and "DISPLAY" not in os.environ:
+    plt.switch_backend("Agg")
 
 evaluator = MNISTEvaluator(Adam())
 
